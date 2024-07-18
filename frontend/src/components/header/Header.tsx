@@ -1,13 +1,14 @@
 import { useContext } from "react"
 import { AppContext } from "../../contexst/AppContexst"
 import { NavLink, useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../pages/Home";
 
 export const Header = () => {
   const { user, setIsLoggedIn, setError, setUser} = useContext(AppContext);
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    fetch('http://127.0.0.1:8000/api/logout')
+    fetch(`${BASE_URL}/api/logout`)
       .then(response => response.json())
       .then(response => {
         console.log(response)

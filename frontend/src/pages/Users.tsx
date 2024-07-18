@@ -7,6 +7,7 @@ import Cookies from "universal-cookie";
 import imgIsActive from '../img/verified_user.png'
 import imgIsNotActive from '../img/highlight_off.png'
 import { Files } from "../components/Files/Files";
+import { BASE_URL } from "./Home";
 
 interface Iusers {
     id: number,
@@ -55,7 +56,7 @@ export const Users = () => {
             async function fetchData () {
                 try {
                     if (method === 'GET') {
-                        const res = await fetch('http://127.0.0.1:8000/api/users')
+                        const res = await fetch(`${BASE_URL}/api/users`)
                         if (!res.ok) {
                             setError(res.status)
                             navigate('/error')
@@ -65,7 +66,7 @@ export const Users = () => {
                         setLoading(false)
                     }
                     else if (method === 'DELETE'){
-                        const res = await fetch(`http://127.0.0.1:8000/api/delete`, {
+                        const res = await fetch(`${BASE_URL}/api/delete`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json;charset=utf-8',
@@ -80,7 +81,7 @@ export const Users = () => {
                         setMethod('GET')
                     }
                     else {
-                        const res = await fetch(`http://127.0.0.1:8000/api/staff-status`, {
+                        const res = await fetch(`${BASE_URL}/api/staff-status`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json;charset=utf-8',

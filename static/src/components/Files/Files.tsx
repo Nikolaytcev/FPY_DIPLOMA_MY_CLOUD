@@ -7,6 +7,7 @@ import { DropdownButton } from 'react-bootstrap';
 import moment from 'moment';
 import { ShareModal } from '../ShareModal/ShareModal';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../pages/Home';
 
 
 export interface Ifile {
@@ -75,7 +76,7 @@ export const Files = (id: Iid) => {
     formData.append('file', form?.file !== undefined ? form.file : '')
     formData.append('comment', form?.comment !== undefined ? form.comment : '')
 
-    fetch('http://127.0.0.1:8000/api/add-file', 
+    fetch(`${BASE_URL}/api/add-file`, 
       {  
       method: 'POST',    
       headers: {
@@ -109,7 +110,7 @@ export const Files = (id: Iid) => {
   const handleOnDeleteFile = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const file_id = e.currentTarget.id
     setLoading(true)
-    fetch(`http://127.0.0.1:8000/api/delete-file?id=${file_id}`, 
+    fetch(`${BASE_URL}/api/delete-file?id=${file_id}`, 
       {  
       method: 'DELETE',    
       headers: {
@@ -145,7 +146,7 @@ export const Files = (id: Iid) => {
     name !== '' ? fileInfo.name = name : ''
     comment !== '' ? fileInfo.comment = comment : ''
     setLoading(true)
-    fetch(`http://127.0.0.1:8000/api/change-file?id=${fileId}`, 
+    fetch(`${BASE_URL}/api/change-file?id=${fileId}`, 
       {  
       method: 'PUT',    
       headers: {
@@ -173,7 +174,7 @@ export const Files = (id: Iid) => {
   const handleOnDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const file_id = e.currentTarget.id
     setLoading(true)
-    fetch(`http://127.0.0.1:8000/api/change-file?id=${file_id}`, 
+    fetch(`${BASE_URL}/api/change-file?id=${file_id}`, 
       {  
         method: 'PUT',    
         headers: {
@@ -204,7 +205,7 @@ export const Files = (id: Iid) => {
   }
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/api/files?id=${userId}`)
+    fetch(`${BASE_URL}/api/files?id=${userId}`)
      .then(response => {
       if (response.status === 200) {
         setStatus(response.status)

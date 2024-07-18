@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { Link, useNavigate } from 'react-router-dom';
 import { AppContext } from '../../contexst/AppContexst';
+import { BASE_URL } from '../../pages/Home';
 
 export interface Ishare {
   fileId: number | undefined,
@@ -24,7 +25,7 @@ export const ShareModal = (fileId: Ishare) => {
     }
 
     useEffect(() => {
-      fetch(`http://127.0.0.1:8000/api/share?id=${fileId.fileId}`)
+      fetch(`${BASE_URL}/api/share?id=${fileId.fileId}`)
         .then(response => response)
         .then(response => {
           if (response.status === 200) {

@@ -5,6 +5,10 @@ import { AppContext } from '../contexst/AppContexst';
 import Cookies from 'universal-cookie';
 import { Files } from '../components/Files/Files';
 
+export const BASE_URL = import .meta.env.VITE_BASE_URL
+
+
+
 interface IAuthForm {
   username: string,
   password: string
@@ -31,7 +35,7 @@ export const Home = () => {
     async function fetchData () {
     try {
       if (form.username !== '' && form.password !== '') {
-        const res = await fetch('http://127.0.0.1:8000/api/login', {
+        const res = await fetch(`${BASE_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
@@ -39,6 +43,7 @@ export const Home = () => {
         },
         body: JSON.stringify(form)
         });
+        if(!res.ok) {throw new Error(res.status.toString())}
         const resJson = await res.json()
         setIsLoggedIn(true);
         setUser(resJson);
@@ -59,10 +64,8 @@ export const Home = () => {
     navigate('/users')
   }
 
-  console.log(isLoggedIn)
-
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/session')
+    fetch(`${BASE_URL}/api/session`)
       .then(response => response.json())
       .then(response => {
         if (response.isauthenticated) {
@@ -73,6 +76,7 @@ export const Home = () => {
         setLoading(false)
       })
   }, [])
+
 
   return (
     <>

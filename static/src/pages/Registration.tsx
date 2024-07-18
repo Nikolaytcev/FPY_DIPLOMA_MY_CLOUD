@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 
 import { useNavigate } from "react-router-dom"
 import { Loader } from "../components/Loader/Loader";
+import { BASE_URL } from "./Home";
 
 interface Iform {
     username: string,
@@ -36,7 +37,7 @@ interface Ierror {
       e.preventDefault()
       setLoading(true);
       if (form.username !== '' && form.password !== '') {
-        fetch('http://127.0.0.1:8000/api/register/', {
+        fetch(`${BASE_URL}/api/register/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
