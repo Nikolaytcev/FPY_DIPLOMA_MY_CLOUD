@@ -135,19 +135,29 @@
 > 
 > [Unit]
 >
-> Description=gunicorn.service
+>Description=gunicorn deamon
 >
-> After=network.target
+>Requires=gunicorn.socket
+>
+>After=network.target
 >
 > [Service]
-> 
-> User=nikolay
 >
-> Group=www-data
+>User=nikolay
 >
-> WorkingDirectory=/home/username/dir_name/project_name
+>Group=www-data
 >
-> ExecStart=/home/username/dir_name/project_name/env/bin/gunicorn --access-logfile - --workers=3 --bind unix:/home/username/dir_name/project_name/dir_with_settings/project.sock dir_with_settings.wsgi:application> 
+>WorkingDirectory=/home/nikolay/work/FPY_DIPLOMA_MY_CLOUD
+>
+>ExecStart=/home/nikolay/work/FPY_DIPLOMA_MY_CLOUD/env/bin/gunicorn \
+>
+>--access-logfile - \
+>
+>--workers 3 \
+>
+>--bind unix:/run/my_cloud.sock \
+>
+>my_cloud.wsgi:application
 >
 > [Install]
 > 
