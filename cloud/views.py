@@ -1,6 +1,7 @@
 import datetime
 import mimetypes
 import os
+import re
 import random
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
@@ -47,8 +48,7 @@ def delete_file_view(request):
     file_id = request.GET.get('id')
     file = Files.objects.get(id=file_id)
     if request.user.is_authenticated and request.user == file.user or request.user.is_staff:
-        username = CustomUser.objects.get(id=file.user.id).username
-        os.remove(str(BASE_DIR) + f'\media\{username}\{file.name}')
+        file.file.delete(save=True)
         file.delete()
         return Response({'status': 'file deleted'}, status=status.HTTP_204_NO_CONTENT)
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_403_FORBIDDEN)
@@ -64,11 +64,8 @@ def change_file_view(request):
         if load_date == 0:
             name = data['name']
             comment = data['comment']
-            username = CustomUser.objects.get(id=file.user.id).username
-            os.rename(str(BASE_DIR) + f'\media\{username}\{file.name}', str(BASE_DIR) + f'\media\{username}\{name}')
             file.comment = comment
             file.name = name
-            file.file.name = f'{username}/{name}'
         else:
             file.load_date = data['loadTime']
         file.save()
