@@ -61,7 +61,7 @@ interface Ierror {
         res.email !== undefined && res.email.length !== 0 ? alert(res.email) : '';
         res.password !== undefined && res.password.length !== 0 ? alert(res.password) : '';
       }
-    }, [res])
+    }, [res]) // eslint-disable-line react-hooks/exhaustive-deps
       
     return (
       <>

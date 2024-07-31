@@ -5,7 +5,7 @@ import { AppContext } from '../contexst/AppContexst';
 import Cookies from 'universal-cookie';
 import { Files } from '../components/Files/Files';
 
-export const BASE_URL = import .meta.env.VITE_BASE_URL
+export const BASE_URL = import .meta.env.VITE_BASE_URL // eslint-disable-line react-refresh/only-export-components
 
 
 
@@ -75,7 +75,7 @@ export const Home = () => {
         setIsFiles(false)
         setLoading(false)
       })
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
 
   return (
@@ -112,3 +112,5 @@ export const Home = () => {
     </>
   )
 }
+
+

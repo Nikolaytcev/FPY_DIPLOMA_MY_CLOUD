@@ -36,7 +36,7 @@ export const ShareModal = (fileId: Ishare) => {
             navigate('/error')
             }
           })
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div

@@ -219,7 +219,7 @@ export const Files = (id: Iid) => {
      .then(response => {
       setData(response.data)
       setLoading(false)})
-  }, [status])
+  }, [status]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="files-container">

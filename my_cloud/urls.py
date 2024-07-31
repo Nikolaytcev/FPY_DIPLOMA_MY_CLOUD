@@ -39,15 +39,8 @@ r.register('api/share', ShareViewSet, basename='download')
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
-                  path('api/login', login_view),
-                  path('api/logout', logout_view),
-                  path('api/delete', delete_view),
-                  path('api/staff-status', admin_status_view),
-                  path('api/session', whoami_view),
-                  path('api/add-file', cloud_view),
-                  path('api/delete-file', delete_file_view),
-                  path('api/change-file', change_file_view),
+                  path('api/', include("cloud.urls")),
+                  path('api/', include("users.urls")),
                   path('', index_view, name='index'),
                   path('__debug__/', include(debug_toolbar.urls)),
-                  # path('users/', include('django.contrib.auth.urls')),
               ] + r.urls + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

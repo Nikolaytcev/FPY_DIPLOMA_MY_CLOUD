@@ -9,8 +9,6 @@ import { Header } from './components/header/Header';
 import { ErrorPage } from './pages/ErrorPage';
 
 
-
-
 function App() {
   
 

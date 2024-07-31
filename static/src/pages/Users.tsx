@@ -51,49 +51,49 @@ export const Users = () => {
     }
 
     useEffect(() => {
-        if (isLoggedIn && user.status === 'admin') {
-            setLoading(true)
-            async function fetchData () {
+        setLoading(true)
+        async function fetchData () {
+            if (isLoggedIn && user.status === 'admin') {
                 try {
                     if (method === 'GET') {
-                        const res = await fetch(`${BASE_URL}/api/users`)
-                        if (!res.ok) {
-                            setError(res.status)
-                            navigate('/error')
-                        }
-                        const resJson = await res.json()
-                        setUsers(resJson)
-                        setLoading(false)
+                            const res = await fetch(`${BASE_URL}/api/users`)
+                            if (!res.ok) {
+                                setError(res.status)
+                                navigate('/error')
+                            }
+                            const resJson = await res.json()
+                            setUsers(resJson)
+                            setLoading(false)
                     }
                     else if (method === 'DELETE'){
-                        const res = await fetch(`${BASE_URL}/api/delete`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json;charset=utf-8',
-                            'X-CSRFToken': cookies.get('csrftoken'),
-                        },
-                        body: JSON.stringify({'userId': elem})
-                        });
-                        if (!res.ok) {
-                            setError(res.status)
-                            navigate('/error')
-                        }
-                        setMethod('GET')
-                    }
-                    else {
-                        const res = await fetch(`${BASE_URL}/api/staff-status`, {
+                            const res = await fetch(`${BASE_URL}/api/delete`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json;charset=utf-8',
                                 'X-CSRFToken': cookies.get('csrftoken'),
                             },
                             body: JSON.stringify({'userId': elem})
-                        });
-                        if (!res.ok) {
-                            setError(res.status)
-                            navigate('/error')
-                        }
+                            });
+                            if (!res.ok) {
+                                setError(res.status)
+                                navigate('/error')
+                            }
                             setMethod('GET')
+                    }
+                    else {
+                            const res = await fetch(`${BASE_URL}/api/staff-status`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json;charset=utf-8',
+                                    'X-CSRFToken': cookies.get('csrftoken'),
+                                },
+                                body: JSON.stringify({'userId': elem})
+                            });
+                            if (!res.ok) {
+                                setError(res.status)
+                                navigate('/error')
+                            }
+                                setMethod('GET')
                     }
                 }
                 catch(e) {
@@ -102,12 +102,12 @@ export const Users = () => {
                     }
                 }     
             }
-            fetchData() 
+            else {
+                navigate('/');
             }
-        else {
-            navigate('/');
         }
-      }, [method])
+        fetchData()
+      }, [method]) // eslint-disable-line react-hooks/exhaustive-deps
     
 
   return (
