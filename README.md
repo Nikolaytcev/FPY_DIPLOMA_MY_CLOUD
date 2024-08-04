@@ -20,7 +20,7 @@
 4. > sudo apt update
 
 5. Устанавливаем зависимости для серверной части: 
-   > sudo apt install python-venv python-pip postgresql nginx gunicorn;
+   > sudo apt install python3-venv python-pip postgresql nginx gunicorn;
 
    Запускаем nginx сервер;
    > sudo systemctl start nginx
@@ -53,7 +53,7 @@
     > git clone https://github.com/Nikolaytcev/FPY_DIPLOMA_MY_CLOUD.git;
 
 9. Создаём виртуальное окружение:
-   > python3 -m -venv env
+   > python3 -m venv env
 
 10. Активируем виртуальное окружение:
    > source env/bin/activate
