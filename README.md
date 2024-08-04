@@ -45,7 +45,7 @@
 
    > psql
 
-   > ALERT USER postgres WITH PASSWORD 'your_password' 
+   > ALTER USER postgres WITH PASSWORD 'your_password' 
    
    > CREATE DATABASE database_name
 
