@@ -17,14 +17,15 @@ interface Iusers {
     email: string,
     is_staff: boolean,
     is_active: boolean,
-    files: string
+    files: number,
+    size: string
 }
 
 
 export const Users = () => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState<boolean>(true);
-    const [users, setUsers] = useState<Iusers[]>([{id: 0, username: '',first_name: '', last_name: '',  email: '', is_staff: false, is_active: false, files: ''}])
+    const [users, setUsers] = useState<Iusers[]>([{id: 0, username: '',first_name: '', last_name: '',  email: '', is_staff: false, is_active: false, files: 0, size: ''}])
     const [elem, setElem] = useState<string>('');
     const [method, setMethod] = useState<string>('GET');
 
@@ -62,7 +63,8 @@ export const Users = () => {
                                 navigate('/error')
                             }
                             const resJson = await res.json()
-                            setUsers(resJson)
+                            console.log(resJson)
+                            setUsers(resJson.users)
                             setLoading(false)
                     }
                     else if (method === 'DELETE'){
@@ -122,6 +124,8 @@ export const Users = () => {
             <th scope="col">First name</th>
             <th scope="col">Last name</th>
             <th scope="col">email</th>
+            <th scope="col">Number of files</th>
+            <th scope="col">Overall size </th>
             <th scope="col">Is active</th>
             <th scope="col">Is admin</th>
             <th scope="col">Action</th>
@@ -135,6 +139,8 @@ export const Users = () => {
                 <td>{u.first_name}</td>
                 <td>{u.last_name}</td>
                 <td>{u.email}</td>
+                <td>{u.files}</td>
+                <td>{u.size}</td>
                 {u.is_active ?
                 <td>
                     <img className="icon" src={imgIsActive} alt="is_active" />

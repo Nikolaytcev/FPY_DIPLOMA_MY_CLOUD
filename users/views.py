@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.template.defaultfilters import filesizeformat
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -6,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
+from cloud.models import Files
 from .forms import RegisterForm
 from .models import CustomUser
 
@@ -13,9 +15,24 @@ from .serializers import UserSerializer
 
 
 class UserViewSet(ModelViewSet):
-    queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def list(self, request, *args, **kwargs):
+        users = CustomUser.objects.all()
+        users_list = []
+        for i in users:
+            files = Files.objects.filter(user=i.id)
+            users_list.append({'id': i.id,
+                               'username': i.username,
+                               'first_name': i.first_name,
+                               'last_name': i.last_name,
+                               'email': i.email,
+                               'is_staff': i.is_staff,
+                               'is_active': i.is_active,
+                               'files': len(files),
+                               'size': filesizeformat(sum([i.file.size for i in files]))
+                               })
+        return Response({'users': users_list})
 
 
 class RegViewSet(ModelViewSet):
@@ -40,7 +57,7 @@ def session_view(request):
     return Response({'isauthenticated': True})
 
 
-@api_view(('GET', ))
+@api_view(('GET',))
 def whoami_view(request):
     if not request.user.is_authenticated:
         return Response({'isauthenticated': False})

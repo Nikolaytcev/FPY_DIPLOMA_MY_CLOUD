@@ -29,13 +29,14 @@ export const ShareModal = (fileId: Ishare) => {
         .then(response => response)
         .then(response => {
           if (response.status === 200) {
-            setLink(response.url)
+            return response.json()
           }
           else {
             setError(response.status)
             navigate('/error')
             }
           })
+          .then(response => setLink(response.url))
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
@@ -46,7 +47,7 @@ export const ShareModal = (fileId: Ishare) => {
           <Modal.Dialog>
             <Modal.Title>Copy the link</Modal.Title>
             <Modal.Body>
-              <Link to={link}>{link}</Link>
+              <Link to={'#'}>{link}</Link>
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => fileId.setShareActive(false)}>Close</Button>

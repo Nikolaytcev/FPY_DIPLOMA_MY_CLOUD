@@ -22,9 +22,8 @@ from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.conf.urls.static import static
 
-from cloud.views import cloud_view, CloudViewSet, delete_file_view, change_file_view, ShareViewSet
-from users.views import RegViewSet, UserViewSet, login_view, logout_view, session_view, delete_view, admin_status_view, \
-    whoami_view
+from cloud.views import CloudViewSet, ShareViewSet, download_file_view
+from users.views import RegViewSet, UserViewSet
 
 
 def index_view(request):
@@ -35,12 +34,13 @@ r = DefaultRouter()
 r.register('api/register', RegViewSet, basename='register')
 r.register('api/users', UserViewSet, basename='user')
 r.register('api/files', CloudViewSet, basename='files')
-r.register('api/share', ShareViewSet, basename='download')
+r.register('api/share', ShareViewSet, basename='share')
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
                   path('api/', include("cloud.urls")),
                   path('api/', include("users.urls")),
                   path('', index_view, name='index'),
+                  path('<str:download>', download_file_view, name='download'),
                   path('__debug__/', include(debug_toolbar.urls)),
               ] + r.urls + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

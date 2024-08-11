@@ -7,7 +7,7 @@ body {
 .btn-home {
   position: absolute;
   left: 40%;
-  top: 80px;
+  top: 90px;
 }
 
 form {
@@ -57,12 +57,12 @@ form {
 
 .action-btn {
   position: absolute;
-  top: 80px;
+  top: 90px;
 }
 
 .btn-back {
   position: absolute;
-  top: 70px;
+  top: 90px;
 }
 
 .input-name,.input-comment {

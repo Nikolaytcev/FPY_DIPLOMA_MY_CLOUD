@@ -1,7 +1,11 @@
 import { useContext } from "react"
 import { AppContext } from "../../contexst/AppContexst"
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../pages/Home";
+
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
 
 export const Header = () => {
   const { user, setIsLoggedIn, setError, setUser} = useContext(AppContext);
@@ -20,31 +24,29 @@ export const Header = () => {
   }
 
   return (
-    <div className="header">
-        <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
-            <div className="container-fluid">
-                <NavLink className="navbar-brand" to="#">My cloud</NavLink>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-                </button>
-                <div className="collapse navbar-collapse" id="navbarNav">
-                <ul className="navbar-nav">
-                    <li className="nav-item">
-                      <NavLink className="nav-link" aria-current="page" to="/">Home</NavLink>
-                    </li>
-                    <li className="nav-item">
-                      <NavLink className="nav-link" aria-current="page" to="/" onClick={handleLogout}>Logout</NavLink>
-                    </li>
-                </ul>
-                </div>
-                {user.username !== '' ? 
-                    <span className="navbar-text">
-                      Hi, {user.username}
-                    </span>
-                     : ''
-                    }
-            </div>
-        </nav>
-    </div>
+    <Navbar collapseOnSelect expand="lg" fixed="top" className="navbar-dark bg-primary">
+      <Container>
+        <Navbar.Brand href="/">My-cloud</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link href="/">Home</Nav.Link>
+            <Nav.Link href="/" onClick={handleLogout}>logout</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+      <Navbar.Collapse className="justify-content-end">
+          <Navbar.Text>
+            {user.username !== '' ? 
+              <span className="navbar-text">
+                Hi, {user.username} <br />
+                {user.status === 'admin' ? <span>status: admin</span> : <span>status: user</span>}
+              </span>
+              : ''
+            }
+          </Navbar.Text>
+        </Navbar.Collapse>
+    </Navbar>
   )
 }
+

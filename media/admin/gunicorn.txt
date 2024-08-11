@@ -1,0 +1,12 @@
+[Unit]
+Description=gunicorn.service
+After=network.target
+
+[Service]
+User=nikolay
+Group=www-data
+WorkingDirectory=/home/nikolay/work/FPY_DIPLOMA_MY_CLOUD
+ExecStart=/home/nikolay/work/FPY_DIPLOMA_MY_CLOUD/env/bin/gunicorn --access-logfile - --workers=3 --bind unix:/home/nikolay/work/FPY_DIPLOMA_MY_CLOUD/my_cloud/project.sock my_cloud.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

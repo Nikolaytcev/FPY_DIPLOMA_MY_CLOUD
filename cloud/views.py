@@ -1,7 +1,6 @@
 import datetime
 import mimetypes
 import os
-import re
 import random
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
@@ -12,13 +11,12 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from cloud.models import Files
 from cloud.permissions import isMyPermissionClass
-from my_cloud.settings import BASE_DIR
-from users.models import CustomUser
+from my_cloud.settings import BASE_URL
 
 
-def to_encode_link(link):
-    CHARACTERS = 'ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz234567890#!$%&@'
-    encode_link = ''.join([random.choice(CHARACTERS) for _ in range(len(link))])
+def to_encode_link():
+    CHARACTERS = 'ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz234567890!$%&@'
+    encode_link = ''.join([random.choice(CHARACTERS) for _ in range(30)])
     return encode_link
 
 
@@ -38,7 +36,7 @@ class CloudViewSet(ModelViewSet):
                           'last_load': file.load_date,
                           'comment': file.comment,
                           'path': file.file.path,
-                          'link': request.build_absolute_uri(file.file.url),
+                          'link': '',
                           'user': file.user.id})
         return Response({'data': files})
 
@@ -79,7 +77,7 @@ def cloud_view(request):
         file = request.FILES.get('file')
         comment = request.POST.get('comment')
         size = filesizeformat(file.size)
-        name = file.name
+        name = file
         user = request.user
         Files.objects.create(
             file=file,
@@ -94,23 +92,28 @@ def cloud_view(request):
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_403_FORBIDDEN)
 
 
+@api_view(('GET',))
+def download_file_view(request, download):
+    file = Files.objects.get(link=download)
+    filepath = file.file.path
+    file = filepath
+    filename = os.path.basename(file)
+    chunk_size = 8192
+    response = StreamingHttpResponse(FileWrapper(open(file, 'rb'), chunk_size),
+                                     content_type=mimetypes.guess_type(file)[0])
+    response['Content-Length'] = os.path.getsize(file)
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    return response
+
+
 class ShareViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         file_id = request.GET.get('id')
         file = Files.objects.get(id=file_id)
         if request.user.is_authenticated and request.user == file.user or request.user.is_staff:
-            filepath = file.file.path
-            file = filepath
-            filename = os.path.basename(file)
-            chunk_size = 8192
-            response = StreamingHttpResponse(FileWrapper(open(file, 'rb'), chunk_size),
-                                                 content_type=mimetypes.guess_type(file)[0])
-            response['Content-Length'] = os.path.getsize(file)
-            response['Content-Disposition'] = "attachment; filename=%s" % filename
-            return response
+            link = to_encode_link()
+            file.link = link
+            file.save()
+            return Response({'url': BASE_URL + link})
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_403_FORBIDDEN)
-
-
-
-
