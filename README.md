@@ -1,9 +1,11 @@
 ##  My cloud app
 
+<font size = 12 color = blue>**Поменял сервер на http://80.78.243.80, сервер, прикреплённый к ответу на ДЗ не действителен**</font>
+
 # Деплой проекта на сервер
 
 1. Арендуем сервер на РЕГ.ru и подключаемся к нему через ssh;
-   > ssh root@89.104.68.178
+   > ssh root@80.78.243.80
 
 2. Создаём пользователя:
    > adduser username
@@ -15,15 +17,12 @@
    > su username
 
 3. Создаём рабочую директорию проекта;
-   > mkdir dir_name
+   > mkdir var/www
 
 4. > sudo apt update
 
 5. Устанавливаем зависимости для серверной части: 
-   > sudo apt install python-venv python-pip postgresql nginx gunicorn;
-
-   Запускаем nginx сервер;
-   > sudo systemctl start nginx
+   > sudo apt install python3-venv python-pip postgresql nginx;
 
 6. Устанавливаем зависимости для фронтенда:
     - установка nvm: 
@@ -44,22 +43,26 @@
    > sudo su postgres
 
    > psql
-
-   > ALERT USER postgres WITH PASSWORD 'your_password' 
    
-   > CREATE DATABASE database_name
+   >CREATE ROLE username WITH LOGIN PASSWORD 'your_password' CREATEDB;
+   
+   > CREATE DATABASE databse_name OWNER username; 
+   
+   > GRANT ALL PRIVILEGES ON DATABASE database_name TO username;
 
-8. Клонируем репозиторий проекта на github в директорию проекта на сервере:
+8. Клонируем репозиторий проекта на github в директорию проекта на сервере (/home/user/var/www):
     > git clone https://github.com/Nikolaytcev/FPY_DIPLOMA_MY_CLOUD.git;
 
 9. Создаём виртуальное окружение:
-   > python3 -m -venv env
+   > sudo python3 -m venv env
 
 10. Активируем виртуальное окружение:
    > source env/bin/activate
 
-11. Переходим в папку проекта и устанавливаем необходимые библиотеки из файла requirements.txt:
+11. Переходим в папку проекта и устанавливаем необходимые библиотеки из файла requirements.txt и gunicorn:
    > pip install -r requirements.txt
+
+   >pip install gunicorn
 
 12. Применяем миграции БД:
    > python manage.py migrate
@@ -72,6 +75,8 @@
    
    Заносим туда наименование сервера (первая часть URL запроса):
    > VITE_BASE_URL = 'http://IP:8000'
+   
+   после настройки gunicorn и ngunx :8000 убираем
 
 15. Производим сборку фронтендовой части:
    > yarn build
@@ -82,21 +87,21 @@
    Заносим туда следующие переменные:
    > SECRET_KEY=your_secret_key
    > 
-   > NAME_DB=your_db_name
+   > NAME_DB=database_name
    > 
-   > USER=postgres
+   > USER=username
    > 
    > DEBUG=True
    > 
    > HOST=127.0.0.1
    > 
-   > HOSTS=89.104.68.178,
+   > HOSTS=80.78.243.80,
    > 
    > PORT=5432
    > 
-   > CSRF=http://89.104.68.178,
+   > CSRF=http://80.78.243.80,
    > 
-   > CORS=http://89.104.68.178, http://*.localhost,
+   > CORS=http://80.78.243.80, http://*.localhost,
    > 
    > PASSWORD=your_password
 
@@ -123,7 +128,7 @@
 >
 > [Socket]
 >
-> ListenStream=/run/my_cloud.sock
+> ListenStream=/run/gunicorn.sock
 >
 > [Install]
 > 
@@ -147,15 +152,15 @@
 >
 >Group=www-data
 >
->WorkingDirectory=/home/nikolay/work/FPY_DIPLOMA_MY_CLOUD
+>WorkingDirectory=/home/user/var/www/FPY_DIPLOMA_MY_CLOUD
 >
->ExecStart=/home/nikolay/work/FPY_DIPLOMA_MY_CLOUD/env/bin/gunicorn \
+>ExecStart=/home/user/var/www/FPY_DIPLOMA_MY_CLOUD/env/bin/gunicorn \
 >
 >--access-logfile - \
 >
 >--workers 3 \
 >
->--bind unix:/run/my_cloud.sock \
+>--bind unix:/run/gunicorn.sock \
 >
 >my_cloud.wsgi:application
 >
@@ -175,7 +180,7 @@
 >sudo systemctl status gunicorn.socket
  
 Установливаем соединение с сокетом через curl.
->  curl --unix-socket /run/sock_file.sock localhost
+>  curl --unix-socket /run/gunicorn.sock localhost
 
 Проверяем статус gunicorn
 > sudo systemctl status gunicorn
@@ -191,25 +196,30 @@
 > 
 > listen 80;
 > 
-> server_name 89.104.68.178;
+> server_name 80.78.243.80;
 >
 > location = /favicon.ico { access_log off; log_not_found off; }
 >
 > location /static/ {
 > 
-> alias /home/username/dir_name/project_name;}
+> root /home/user/var/www/FPY_DIPLOMA_MY_CLOUD;}
 >
 > location /media/ {
 > 
-> alias /home/username/dir_name/project_name;}
+> alias /home/user/var/www/FPY_DIPLOMA_MY_CLOUD;}
 >
 > location / {
 > 
 > include proxy_params;
 > 
-> proxy_pass http://unix:/run/sock_file.sock; }
+> proxy_pass http://unix:/run/gunicorn.sock; }
 > 
 > }
+
+Заходим в файл 
+> /etc/nginx/nginx.conf
+
+и меняем USER на пользователя системы username
 
 Перезапускаем nginx:
 > sudo systemctl restart nginx
@@ -235,7 +245,12 @@
 Проблемы по серверной части:
    - ~~nginx работает, но по статическим файлам получаю ошибку **403 Forbidden**. 
       Пробовал устанавливать доступ к папкам 755 и файлам 644, менял строку **user** в *nginx.conf* - не помогло.
+<<<<<<< HEAD
       Проблема остаётся актуальной.~~
+=======
+      Проблема остаётся актуальной~~.
+   - ~~При работе через gunicorn для файлов размером больше 1 мБ вылетает 413 ошибка, на данный момнет пока не решил.~~
+>>>>>>> d0b6ebea766fe2c4d64b4087ec0f6981b6cfb188
    - CORS, судя по ошибке, нужно использовать протокол HTTPS, а не HTTP.
    - Копирование ссылки для скачивания файла в модальном окне работает только для локальной машины,
       как я понял, связано это тоже с HTTPS, так как HTTP - не безопасен.
